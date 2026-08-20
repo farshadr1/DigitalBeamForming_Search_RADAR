@@ -2,20 +2,24 @@ package main
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/farshadr1/DigitalBeamForming_Search_RADAR/modules"
 )
 
 func main() {
-	cfg := modules.LFMConfig{
-		SampleRate: 10e6,  // 10 MHz
-		PulseWidth: 10e-6, // 10 µs
-		Bandwidth:  5e6,   // 5 MHz
+	cfg, err := LoadConfig()
+	if err != nil {
+		log.Fatal(err)
 	}
 
-	signal := modules.GenerateLFM(cfg)
+	signal := modules.GenerateLFM(modules.LFMConfig{
+		SampleRate: cfg.Signal.SampleRate,
+		PulseWidth: cfg.Signal.PulseWidth,
+		Bandwidth:  cfg.Signal.Bandwidth,
+	})
 
-	fmt.Println("Number of samples:", len(signal.Samples))
 	fmt.Println("Sample rate:", signal.SampleRate)
+	fmt.Println("Number of samples:", len(signal.Samples))
 
 }

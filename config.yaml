@@ -2,3 +2,5 @@ signal:
   sample_rate: 10000000      # 10 MHz
   pulse_width: 0.00001       # 10 µs
   bandwidth: 5000000         # 5 MHz
+radar:
+  carrierFreq: 12000000000   # 12 GHz

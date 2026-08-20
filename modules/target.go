@@ -33,10 +33,12 @@ func (t Target) Elevation() float64 {
 }
 
 // Radial Speed
-func (t Target) Speed() float64 {
-	return math.Sqrt(
-		t.VelocityX*t.VelocityX + t.VelocityY*t.VelocityY + t.VelocityZ*t.VelocityZ,
-	)
+func (t Target) RadialVelocity() float64 {
+	r := t.Range()
+
+	return (t.X*t.VelocityX +
+		t.Y*t.VelocityY +
+		t.Z*t.VelocityZ) / r
 }
 
 // Update moves the target forward by dt seconds.

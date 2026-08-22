@@ -13,6 +13,7 @@ const (
 func GenerateEcho(tx Signal,
 	target Target,
 	carrierFreq float64,
+	pri float64,
 ) Signal {
 
 	r := target.Range()
@@ -22,6 +23,7 @@ func GenerateEcho(tx Signal,
 
 	// Delay in samples
 	delaySamples := int(math.Round(delaySec * tx.SampleRate))
+	EchoLength := int(math.Round(pri * tx.SampleRate))
 
 	// Doppler frequency
 	lambda := SpeedOfLight / carrierFreq
@@ -32,7 +34,7 @@ func GenerateEcho(tx Signal,
 
 	echo := make(
 		[]complex128,
-		len(tx.Samples)+delaySamples,
+		EchoLength,
 	)
 
 	for n := range tx.Samples {

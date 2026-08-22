@@ -13,13 +13,26 @@ func main() {
 		log.Fatal(err)
 	}
 
-	signal := modules.GenerateLFM(modules.LFMConfig{
+	tx_signal := modules.GenerateLFM(modules.LFMConfig{
 		SampleRate: cfg.Signal.SampleRate,
 		PulseWidth: cfg.Signal.PulseWidth,
 		Bandwidth:  cfg.Signal.Bandwidth,
 	})
 
-	fmt.Println("Sample rate:", signal.SampleRate)
-	fmt.Println("Number of samples:", len(signal.Samples))
+	tgt1 := modules.Target{
+		ID:        1,
+		X:         5e3,
+		Y:         12e3,
+		Z:         900,
+		VelocityX: 100,
+		VelocityY: 100,
+		VelocityZ: 0,
+		RCS:       10,
+	}
+
+	pri := float64(200e-6)
+	echoed_signal := modules.GenerateEcho(tx_signal, tgt1, cfg.Radar.CarrierFreq, pri)
+	fmt.Println(echoed_signal)
+	// mf := modules.NewMatchedFilter(len(echoed_signal.Samples), tx_signal)
 
 }

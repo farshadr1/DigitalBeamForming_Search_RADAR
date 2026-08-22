@@ -21,6 +21,5 @@ func main() {
 
 	fmt.Println("Sample rate:", signal.SampleRate)
 	fmt.Println("Number of samples:", len(signal.Samples))
-	fmt.Println("Radar carrierFreq:", cfg.Radar.CarrierFreq)
 
 }

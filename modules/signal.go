@@ -26,7 +26,7 @@ type LFMConfig struct {
 //
 // where:
 //
-//	k = Bandwidth / PulseWidthcomplex128
+//	k = Bandwidth / PulseWidth
 //
 // The instantaneous frequency sweeps approximately from
 // -Bandwidth/2 to +Bandwidth/2.

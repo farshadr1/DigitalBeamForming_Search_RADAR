@@ -51,9 +51,9 @@ func NewMatchedFilter(signalLen int, refPulse Signal) *MatchedFilter {
 }
 
 // Apply Match Filter on signal
-func (mf *MatchedFilter) Apply(signal []complex128) []complex128 {
+func (mf *MatchedFilter) Apply(signal Signal) Signal {
 	sigPadded := make([]complex128, mf.fftLen)
-	copy(sigPadded, signal)
+	copy(sigPadded, signal.Samples)
 
 	X := mf.fft.Coefficients(nil, sigPadded)
 
@@ -71,6 +71,9 @@ func (mf *MatchedFilter) Apply(signal []complex128) []complex128 {
 		y[i] *= norm
 	}
 
-	// trim output
-	return y[:mf.outLen]
+	return Signal{
+		// trim output
+		Samples:    y[:mf.outLen],
+		SampleRate: signal.SampleRate,
+	}
 }

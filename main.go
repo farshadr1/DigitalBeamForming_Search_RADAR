@@ -1,9 +1,9 @@
 package main
 
 import (
-	"fmt"
 	"log"
 
+	"github.com/farshadr1/DigitalBeamForming_Search_RADAR/figures"
 	"github.com/farshadr1/DigitalBeamForming_Search_RADAR/modules"
 )
 
@@ -32,7 +32,8 @@ func main() {
 
 	pri := float64(200e-6)
 	echoed_signal := modules.GenerateEcho(tx_signal, tgt1, cfg.Radar.CarrierFreq, pri)
-	fmt.Println(echoed_signal)
-	// mf := modules.NewMatchedFilter(len(echoed_signal.Samples), tx_signal)
 
+	mf := modules.NewMatchedFilter(len(echoed_signal.Samples), tx_signal)
+	mf_signal := mf.Apply(echoed_signal)
+	figures.Output_inSample(mf_signal)
 }

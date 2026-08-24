@@ -5,8 +5,9 @@ import (
 )
 
 type Config struct {
-	Signal SignalConfig `mapstructure:"signal"`
-	Radar  RadarConfig  `mapstructure:"radar"`
+	Signal  SignalConfig   `mapstructure:"signal"`
+	Radar   RadarConfig    `mapstructure:"radar"`
+	Targets []TargetConfig `mapstructure:"targets"`
 }
 
 type SignalConfig struct {
@@ -17,6 +18,12 @@ type SignalConfig struct {
 
 type RadarConfig struct {
 	CarrierFreq float64 `mapstructure:"carrierFreq"`
+}
+
+type TargetConfig struct {
+	Position [3]float64 `mapstructure:"location"`
+	Velocity [3]float64 `mapstructure:"velocity"`
+	RCS      float64    `mapstructure:"rcs"`
 }
 
 func LoadConfig() (Config, error) {

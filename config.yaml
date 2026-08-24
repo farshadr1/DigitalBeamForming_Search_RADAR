@@ -2,5 +2,15 @@ signal:
   sample_rate: 10e6     # 10 MHz
   pulse_width: 10e-6    # 10 µs
   bandwidth: 5e6        # 5 MHz
+
 radar:
   carrierFreq: 12e9     # 12 GHz
+
+targets:
+  - position: [10000, 2000, 500]
+    velocity: [-100, 50, 0]
+    rcs: 10
+
+  - position: [15000, -3000, 1000]
+    velocity: [-150, 20, 5]
+    rcs: 5

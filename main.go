@@ -1,9 +1,9 @@
 package main
 
 import (
+	"fmt"
 	"log"
 
-	"github.com/farshadr1/DigitalBeamForming_Search_RADAR/figures"
 	"github.com/farshadr1/DigitalBeamForming_Search_RADAR/modules"
 )
 
@@ -13,27 +13,30 @@ func main() {
 		log.Fatal(err)
 	}
 
-	tx_signal := modules.GenerateLFM(modules.LFMConfig{
-		SampleRate: cfg.Signal.SampleRate,
-		PulseWidth: cfg.Signal.PulseWidth,
-		Bandwidth:  cfg.Signal.Bandwidth,
-	})
+	// tx_signal := modules.GenerateLFM(modules.LFMConfig{
+	// 	SampleRate: cfg.Signal.SampleRate,
+	// 	PulseWidth: cfg.Signal.PulseWidth,
+	// 	Bandwidth:  cfg.Signal.Bandwidth,
+	// })
 
-	tgt1 := modules.Target{
-		ID:        1,
-		X:         5e3,
-		Y:         12e3,
-		Z:         900,
-		VelocityX: 100,
-		VelocityY: 100,
-		VelocityZ: 0,
-		RCS:       10,
+	// pri := float64(200e-6)
+	// echoed_signal := modules.GenerateEcho(tx_signal, tgt1, cfg.Radar.CarrierFreq, pri)
+
+	// mf := modules.NewMatchedFilter(len(echoed_signal.Samples), tx_signal)
+	// mf_signal := mf.Apply(echoed_signal)
+	// figures.Output_inTime(mf_signal)
+
+	tgts := make([]modules.Target, len(cfg.Targets))
+	for i, target := range cfg.Targets {
+		fmt.Printf("Target %d\n", i+1)
+		fmt.Printf("  Position: %v\n", target.Position)
+		fmt.Printf("  Velocity: %v\n", target.Velocity)
+		fmt.Printf("  RCS:      %.2f m²\n", target.RCS)
+
+		tgts[i].ID = i
+		tgts[i].X, tgts[i].Y, tgts[i].Z = target.Position[0], target.Position[1], target.Position[2]
+		tgts[i].VelocityX, tgts[i].VelocityY, tgts[i].VelocityZ = target.Velocity[0], target.Velocity[1], target.Velocity[2]
+		tgts[i].RCS = target.RCS
 	}
 
-	pri := float64(200e-6)
-	echoed_signal := modules.GenerateEcho(tx_signal, tgt1, cfg.Radar.CarrierFreq, pri)
-
-	mf := modules.NewMatchedFilter(len(echoed_signal.Samples), tx_signal)
-	mf_signal := mf.Apply(echoed_signal)
-	figures.Output_inSample(mf_signal)
 }

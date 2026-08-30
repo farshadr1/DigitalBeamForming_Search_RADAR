@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/farshadr1/DigitalBeamForming_Search_RADAR/antenna"
 	"github.com/farshadr1/DigitalBeamForming_Search_RADAR/modules"
 )
 
@@ -37,6 +38,20 @@ func main() {
 		tgts[i].X, tgts[i].Y, tgts[i].Z = target.Position[0], target.Position[1], target.Position[2]
 		tgts[i].VelocityX, tgts[i].VelocityY, tgts[i].VelocityZ = target.Velocity[0], target.Velocity[1], target.Velocity[2]
 		tgts[i].RCS = target.RCS
+	}
+
+	beamAngles := antenna.GenerateBeamAngles(
+		32,
+		0,
+		60.0,
+	)
+
+	for i, angle := range beamAngles {
+		fmt.Printf(
+			"Beam %02d : %+6.2f deg\n",
+			i,
+			angle,
+		)
 	}
 
 }

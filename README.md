@@ -86,6 +86,6 @@ go build ./...
 Adjust `config.yaml` to modify simulation parameters.
 
 ---
-If you want, I can further tailor this README (examples, diagrams, or usage samples). 
+
 
 

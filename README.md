@@ -1,54 +1,91 @@
-# DigitalBeamForming_Search_RADAR
-An typycal Search RADAR simulation that use DigitalBeamForming in receive
 
+# Digital Beamforming Search Radar
 
-## Signal Generator
-Generation Chirp LFM base this formula : $exp(j * \pi * \frac{Bandwidth}{PulseWidth} * t^2)$
+A compact Go-based simulation of a search radar that uses digital beamforming (DBF) on receive. The project simulates LFM chirp transmission, multiple targets, echo generation (including range delay, amplitude scaling and Doppler), and a 1-D antenna array with DBF producing multiple elevation beams.
 
-the instance bandwidth sweep between $[\frac{-Bandwidth}{2} :\frac{+Bandwidth}{2}]$
+## Features
 
-SampleRate, PulseWidth and Bandwidth read from config.yaml file.
+- LFM (chirp) signal generator
+- Configurable sample rate, pulse width and bandwidth via `config.yaml`
+- Multiple target model with position, velocity and RCS
+- Echo model with range delay, amplitude scaling and Doppler shift
+- 1-D planar antenna array and digital beamforming to form multiple beams
 
-## Target Model
-Target model is contain initial lication and velocity in cartesian and RCS(Radar cross section). the read from config.yaml file. one or more targets can describe.
+## Configuration
 
-## Echo Model
-base on each target situation and envirment, the echoed pulse delayed and change amp and frequncy.
+Simulation parameters (SampleRate, PulseWidth, Bandwidth, antenna geometry, radar carrier frequency, targets, etc.) are read from `config.yaml`.
 
-$delaySec = \frac{2*r}{SpeedOfLight}$ ,where r is the range.
+## Signal generator
 
-$amp = 
+The transmitted LFM chirp follows the complex baseband expression:
 
-$fd = 2 * V_r / \lambda$ , where $V_r$ is radial velocity and $\lambda$ is the radiated wave length base radar frequency that raed from config.yaml file.
+$$s(t)=\exp\left(j\pi\frac{\mathrm{Bandwidth}}{\mathrm{PulseWidth}}t^2\right)$$
 
-## Antenna and DBF
+The instantaneous frequency sweeps across $[ -\mathrm{Bandwidth}/2, +\mathrm{Bandwidth}/2 ]$.
 
-Antann Stacked N element in y-axis that each element conncetd to T/R module. with Digtal Weightening Matrix we make M beam in Elevation.
+## Target model
 
-we assume 1-D planar array with Gaussain Pattern elements with ElemAzBWDeg and ElemElBWDeg 3dB Beamwidth.  
-Antenna element and array configuration read from config.yaml file.
+Each target is described by Cartesian position, velocity and an RCS value. One or more targets can be defined in `config.yaml`.
 
+## Echo model
 
-### Mathematics:
-the Complete Antenna is:  
-$G(\theta,\phi)=G_e(\theta,\phi)|AF(\theta,\phi)|^2$  
+For a target at range $r$ and radial velocity $V_r$ the main effects on the received pulse are:
 
-The received signal at element (n) has a phase term:  
-$exp(jkz_nsin(\phi))$ where $k=2\frac{\pi}{\lambda}$ and $z_n=(n-\frac{N-1}{2})d$ where d is element spacing.
+- Range delay: $\mathrm{delaySec}=\dfrac{2r}{c}$, where $c$ is the speed of light.
+- Doppler frequency shift: $f_d=\dfrac{2V_r}{\lambda}$, where $\lambda$ is the radar wavelength (from carrier frequency).
+- Amplitude scaling according to range and RCS (implementation-specific in `echo.go`).
 
-For pointing beam to $\phi_0$ :  
-$y=\sum_{n=0}^{N-1} w_n x_n$ where $w_n=exp(-jkz_nsin(\phi_0))$
+## Antenna array and digital beamforming
 
-For a uniform linear array, the approximate half-power beamwidth is:  
-$HPBW=\frac{0.886\lambda}{Ndcos(\phi_0)}$ in radian
+This project assumes a 1-D uniform linear array (elements stacked along the y-axis) with element pattern approximated by a Gaussian 3-dB beamwidth in azimuth and elevation (`ElemAzBWDeg`, `ElemElBWDeg`). The array and element parameters are read from `config.yaml`.
 
-for Build M simlutantly Beam we need $W_{N*M}$ complex beamforming matrix.
+The overall array gain is modeled as:
 
-how many DBF beams need to cover an angular sector S:  
-$M\approx 1+\frac{S}{K HPBW}$ where k is overlap factor(for example 1:no overlap ,0.5: 0.5 HPBW)
+$$G(\theta,\phi)=G_e(\theta,\phi)\,|AF(\theta,\phi)|^2$$
 
-We assume the element pattern with a Gaussian pattern.
-The power Gain is:  
-$G = exp(-4ln(2) * (\frac{\theta}{\theta_3db})^2)$
+The phase at element $n$ for a plane wave arriving from angle $\phi$ uses the steering term
+
+$$\exp\big(jk z_n\sin\phi\big)\quad\text{with }k=\dfrac{2\pi}{\lambda},\;z_n=\big(n-\tfrac{N-1}{2}\big)d$$
+
+To steer a beam to angle $\phi_0$ the array weights are
+
+$$w_n=\exp\big(-jk z_n\sin\phi_0\big)\qquad y=\sum_{n=0}^{N-1} w_n x_n$$
+
+An approximate half-power beamwidth (HPBW) for a uniform linear array is
+
+$$\mathrm{HPBW}\approx\dfrac{0.886\,\lambda}{N d \cos\phi_0}$$
+
+To form $M$ simultaneous beams a complex beamforming matrix $W_{N\times M}$ is used. The number of DBF beams required to cover an angular sector $S$ can be estimated as
+
+$$M\approx 1+\dfrac{S}{K\,\mathrm{HPBW}}$$
+
+where $K$ is an overlap factor (e.g. $K=1$ no overlap, $K=0.5$ for 50% overlap).
+
+The element power pattern is approximated with a Gaussian:
+
+$$G(\theta)=\exp\left(-4\ln 2\,\left(\dfrac{\theta}{\theta_{3\mathrm{dB}}}\right)^2\right)$$
+
+## Files of interest
+
+- `main.go` — simulation entry point
+- `config.yaml` — simulation configuration
+- `signal.go` — signal generation
+- `target.go` — target definitions
+- `echo.go` — echo (channel) model
+- `fig.go` / `figures/` — plotting helpers
+
+## Running
+
+Build and run the simulation with the standard Go toolchain:
+
+```bash
+go build ./...
+./DigitalBeamForming_Search_RADAR
+```
+
+Adjust `config.yaml` to modify simulation parameters.
+
+---
+If you want, I can further tailor this README (examples, diagrams, or usage samples). 
 
 

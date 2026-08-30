@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/farshadr1/DigitalBeamForming_Search_RADAR/antenna"
+	"github.com/farshadr1/DigitalBeamForming_Search_RADAR/antenna/antenna"
 	"github.com/farshadr1/DigitalBeamForming_Search_RADAR/modules"
 )
 

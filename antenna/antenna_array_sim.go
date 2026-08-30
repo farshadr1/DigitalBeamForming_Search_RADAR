@@ -3,7 +3,8 @@ package main
 import (
 	"fmt"
 	"math"
-	"modules/antenna"
+
+	"github.com/farshadr1/DigitalBeamForming_Search_RADAR/antenna/antenna"
 )
 
 const (

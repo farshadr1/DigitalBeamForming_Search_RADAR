@@ -47,5 +47,8 @@ for Build M simlutantly Beam we need $W_{N*M}$ complex beamforming matrix.
 how many DBF beams need to cover an angular sector S:  
 $M\approx 1+\frac{S}{K HPBW}$ where k is overlap factor(for example 1:no overlap ,0.5: 0.5 HPBW)
 
+We assume the element pattern with a Gaussian pattern.
+The power Gain is:  
+$G = exp(-4ln(2) * (\frac{\theta}{\theta_3db})^2)$
 
 

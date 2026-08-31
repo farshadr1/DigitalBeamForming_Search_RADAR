@@ -174,6 +174,20 @@ func main() {
 	}
 
 	// -------------------------------------------------------------------------
+	// Plot Contoure chart
+	// -------------------------------------------------------------------------
+
+	err := antenna.PlotBeamContour(
+		pattern,
+		16,
+		"beam16_contour.png",
+	)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// -------------------------------------------------------------------------
 	// Plot Stacked Beams
 	// -------------------------------------------------------------------------
 
@@ -195,7 +209,7 @@ func main() {
 		29, 30, 31, // upper elevation edge
 	}
 
-	err := antenna.PlotElevationBeamPatterns(
+	err = antenna.PlotElevationBeamPatterns(
 		pattern2,
 		beamAngles,
 		beamIndices,

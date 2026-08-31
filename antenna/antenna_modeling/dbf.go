@@ -7,6 +7,7 @@ import (
 	"sync"
 
 	"gonum.org/v1/plot"
+	"gonum.org/v1/plot/palette"
 	"gonum.org/v1/plot/plotter"
 	"gonum.org/v1/plot/vg"
 )
@@ -438,6 +439,99 @@ func PlotElevationBeamPatterns(
 	return p.Save(
 		10*vg.Inch,
 		6*vg.Inch,
+		filename,
+	)
+}
+
+//-------------------------------------------------------------------------
+// Plot Conture chart
+//-------------------------------------------------------------------------
+
+type BeamGrid struct {
+	pattern Pattern
+	beam    int
+}
+
+func (g BeamGrid) Dims() (c, r int) {
+	return len(g.pattern.Azimuths),
+		len(g.pattern.Elevations)
+}
+
+func (g BeamGrid) X(c int) float64 {
+	return g.pattern.Azimuths[c]
+}
+
+func (g BeamGrid) Y(r int) float64 {
+	return g.pattern.Elevations[r]
+}
+
+func (g BeamGrid) Z(c, r int) float64 {
+	return g.pattern.Gain[g.beam][r][c]
+}
+
+func PlotBeamContour(
+	pattern Pattern,
+	beam int,
+	filename string,
+) error {
+
+	grid := BeamGrid{
+		pattern: pattern,
+		beam:    beam,
+	}
+
+	p := plot.New()
+
+	p.Title.Text = fmt.Sprintf(
+		"Beam %d Antenna Pattern",
+		beam,
+	)
+
+	p.X.Label.Text = "Azimuth (deg)"
+	p.Y.Label.Text = "Elevation (deg)"
+
+	// Contour levels in dB.
+	levels := []float64{
+		-40,
+		-35,
+		-30,
+		-25,
+		-20,
+		-15,
+		-10,
+		-5,
+		0,
+	}
+
+	// Create contour plot.
+	contour := plotter.NewContour(
+		grid,
+		levels,
+		palette.Rainbow(
+			len(levels),
+			palette.Blue,
+			palette.Red,
+			1,
+			1,
+			1,
+		),
+	)
+
+	p.Add(contour)
+
+	// Add normal X/Y grid.
+	p.Add(plotter.NewGrid())
+
+	// Axis limits.
+	p.X.Min = pattern.Azimuths[0]
+	p.X.Max = pattern.Azimuths[len(pattern.Azimuths)-1]
+
+	p.Y.Min = pattern.Elevations[0]
+	p.Y.Max = pattern.Elevations[len(pattern.Elevations)-1]
+
+	return p.Save(
+		10*vg.Inch,
+		8*vg.Inch,
 		filename,
 	)
 }

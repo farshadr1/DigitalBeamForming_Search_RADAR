@@ -5,19 +5,25 @@ import (
 )
 
 type Config struct {
+	Antenna AntennaConfig  `mapstructure:"antenna"`
 	Signal  SignalConfig   `mapstructure:"signal"`
-	Radar   RadarConfig    `mapstructure:"radar"`
 	Targets []TargetConfig `mapstructure:"targets"`
+}
+
+type AntennaConfig struct {
+	NumElements    int     `mapstructure:"numElements"`
+	NumBeams       int     `mapstructure:"numBeams"`
+	ElementSpacing float64 `mapstructure:"elementSpacing"`
+	ElementAzHPBW  float64 `mapstructure:"elementAzHPBW"`
+	ElementElHPBW  float64 `mapstructure:"elementElHPBW"`
+	AntennaTilt    float64 `mapstructure:"antennaTilt"`
+	Frequency      float64 `mapstructure:"frequency"`
 }
 
 type SignalConfig struct {
 	SampleRate float64 `mapstructure:"sample_rate"`
 	PulseWidth float64 `mapstructure:"pulse_width"`
 	Bandwidth  float64 `mapstructure:"bandwidth"`
-}
-
-type RadarConfig struct {
-	CarrierFreq float64 `mapstructure:"carrierFreq"`
 }
 
 type TargetConfig struct {

@@ -1,15 +1,21 @@
-signal:
-  sample_rate: 10e6     # 10 MHz
-  pulse_width: 10e-6    # 10 µs
-  bandwidth: 5e6        # 5 MHz
+antenna:
+  numElements: 48       # Number of Arrays
+  numBeams: 32          # Number of DBF
+  elementSpacing: 0.015 # Space between Elements in meter
+  elementAzHPBW: 1.5    # Element Az pattern in degree
+  elementElHPBW: 50     # Element El pattern in degree
+  antennaTilt: 25       # Antenna Elevation Tilt in degree
+  Frequency: 10e9       # Antenna Frequency
 
-radar:
-  carrierFreq: 12e9     # 12 GHz
+signal:
+  sample_rate: 10e6     # Signal Sampling Rate in Hz
+  pulse_width: 10e-6    # Signal Pulse width in sec
+  bandwidth: 5e6        # Chirp Bandwidth in Hz
 
 targets:
-  - position: [10000, 2000, 500]
-    velocity: [-100, 50, 0]
-    rcs: 10
+  - position: [10000, 2000, 500]    # in meter
+    velocity: [-100, 50, 0]         # in meter/sec
+    rcs: 10                         # in square meter
 
   - position: [15000, -3000, 1000]
     velocity: [-150, 20, 5]

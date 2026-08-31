@@ -1,9 +1,14 @@
 package antenna
 
 import (
+	"fmt"
 	"math"
 	"math/cmplx"
 	"sync"
+
+	"gonum.org/v1/plot"
+	"gonum.org/v1/plot/plotter"
+	"gonum.org/v1/plot/vg"
 )
 
 // -----------------------------------------------------------------------------
@@ -304,7 +309,7 @@ func GeneratePattern(
 		)
 	}
 
-	// Each beam can be calculated independently.
+	// Using Go Routine
 	var wg sync.WaitGroup
 
 	for b := range beamAngles {
@@ -344,4 +349,95 @@ func GeneratePattern(
 	wg.Wait()
 
 	return pattern
+}
+
+// -----------------------------------------------------------------------------
+// Plot Elevation-cut
+// -----------------------------------------------------------------------------
+
+func PlotElevationBeamPatterns(
+	pattern Pattern,
+	beamAngles []float64,
+	beamIndices []int,
+	filename string,
+) error {
+
+	p := plot.New()
+
+	p.Title.Text = "DBF Elevation Beam Patterns at Azimuth = 0°"
+	p.X.Label.Text = "Elevation (deg)"
+	p.Y.Label.Text = "Gain (dB)"
+
+	p.Y.Tick.Marker = plot.ConstantTicks(
+		[]plot.Tick{
+			{Value: -40, Label: "-40"},
+			{Value: -35, Label: "-35"},
+			{Value: -30, Label: "-30"},
+			{Value: -25, Label: "-25"},
+			{Value: -20, Label: "-20"},
+			{Value: -15, Label: "-15"},
+			{Value: -10, Label: "-10"},
+			{Value: -5, Label: "-5"},
+			{Value: 0, Label: "0"},
+		},
+	)
+
+	grid := plotter.NewGrid()
+	p.Add(grid)
+
+	// Place the legend in the upper-right corner.
+	p.Legend.Top = true
+	p.Legend.Left = false
+
+	// Only one azimuth point: Az = 0°
+	azIndex := 0
+
+	for _, beam := range beamIndices {
+
+		// Safety check
+		if beam < 0 || beam >= len(pattern.Gain) {
+			continue
+		}
+
+		pts := make(
+			plotter.XYs,
+			len(pattern.Elevations),
+		)
+
+		for ei, elevation := range pattern.Elevations {
+
+			pts[ei].X = elevation
+			pts[ei].Y = pattern.Gain[beam][ei][azIndex]
+		}
+
+		line, err := plotter.NewLine(pts)
+		if err != nil {
+			return err
+		}
+
+		line.Width = vg.Points(1.2)
+
+		p.Add(line)
+
+		p.Legend.Add(
+			fmt.Sprintf(
+				"Beam %d (%.2f°)",
+				beam,
+				beamAngles[beam],
+			),
+			line,
+		)
+	}
+
+	p.X.Min = pattern.Elevations[0]
+	p.X.Max = pattern.Elevations[len(pattern.Elevations)-1]
+
+	p.Y.Min = -40
+	p.Y.Max = 5
+
+	return p.Save(
+		10*vg.Inch,
+		6*vg.Inch,
+		filename,
+	)
 }

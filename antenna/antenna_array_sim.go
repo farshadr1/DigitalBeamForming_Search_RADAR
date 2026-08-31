@@ -2,9 +2,10 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"math"
 
-	"github.com/farshadr1/DigitalBeamForming_Search_RADAR/antenna/antenna"
+	antenna "github.com/farshadr1/DigitalBeamForming_Search_RADAR/antenna/antenna_modeling"
 )
 
 const (
@@ -72,7 +73,7 @@ func main() {
 	beamAngles := antenna.GenerateBeamAngles(
 		cfg.NumBeams,
 		0,
-		60.0,
+		50.0,
 	)
 
 	fmt.Println("\nDBF beam pointing angles:")
@@ -131,7 +132,7 @@ func main() {
 
 	var elevations []float64
 
-	for el := -40.0; el <= 40.0; el += 0.1 {
+	for el := -40.0; el <= 40.0; el += 0.05 {
 		elevations = append(elevations, el)
 	}
 
@@ -159,7 +160,7 @@ func main() {
 
 	for i, el := range elevations {
 
-		if math.Abs(el-beamElevation) < 3.0 {
+		if math.Abs(el-beamElevation) < 1.5 {
 
 			// Azimuth = 0°
 			azIndex := len(azimuths) / 2
@@ -175,5 +176,34 @@ func main() {
 	// -------------------------------------------------------------------------
 	// Plot Stacked Beams
 	// -------------------------------------------------------------------------
+
+	fmt.Println("\nDraw stacke beams in elevation_beams.png")
+
+	var azimuths2 []float64
+	azimuths2 = append(azimuths2, 0.0)
+
+	pattern2 := antenna.GeneratePattern(
+		cfg,
+		beamAngles,
+		azimuths2,
+		elevations,
+	)
+
+	beamIndices := []int{
+		0, 1, 2, // lower elevation edge
+		16,         // center
+		29, 30, 31, // upper elevation edge
+	}
+
+	err := antenna.PlotElevationBeamPatterns(
+		pattern2,
+		beamAngles,
+		beamIndices,
+		"elevation_beams.png",
+	)
+
+	if err != nil {
+		log.Fatal(err)
+	}
 
 }

@@ -33,3 +33,4 @@ go.work.sum
 *.pptx
 *.pptx#
 /Documents
+*.*png

@@ -10,6 +10,7 @@ import (
 	"gonum.org/v1/plot/palette"
 	"gonum.org/v1/plot/plotter"
 	"gonum.org/v1/plot/vg"
+	"gonum.org/v1/plot/vg/draw"
 )
 
 // -----------------------------------------------------------------------------
@@ -492,35 +493,41 @@ func PlotBeamContour(
 
 	// Contour levels in dB.
 	levels := []float64{
-		-40,
-		-35,
-		-30,
-		-25,
-		-20,
-		-15,
-		-10,
-		-5,
-		0,
+		-40, -35, -30, -25, -20, -15, -10, -5, 0,
 	}
 
-	// Create contour plot.
-	contour := plotter.NewContour(
-		grid,
-		levels,
-		palette.Rainbow(
-			len(levels),
-			palette.Blue,
-			palette.Red,
-			1,
-			1,
-			1,
-		),
+	pal := palette.Rainbow(
+		len(levels),
+		palette.Blue, palette.Red,
+		1, 1, 1,
 	)
 
+	// Create contour plot.
+	contour := plotter.NewContour(grid, levels, pal)
 	p.Add(contour)
 
 	// Add normal X/Y grid.
 	p.Add(plotter.NewGrid())
+
+	// --- Compact legend: one swatch per dB level ---
+	colors := pal.Colors()
+	for i := len(levels) - 1; i >= 0; i-- {
+		sw, err := plotter.NewScatter(plotter.XYs{{X: 0, Y: 0}})
+		if err != nil {
+			return err
+		}
+		sw.GlyphStyle.Shape = draw.BoxGlyph{}
+		sw.GlyphStyle.Color = colors[i]
+		sw.GlyphStyle.Radius = vg.Points(4)
+
+		p.Legend.Add(fmt.Sprintf("%.0f dB", levels[i]), sw)
+	}
+
+	p.Legend.Top = true
+	p.Legend.YOffs = -vg.Points(10)
+	p.Legend.ThumbnailWidth = vg.Points(20)
+	p.Legend.TextStyle.Font.Size = vg.Points(16)
+	p.Legend.Padding = vg.Points(4)
 
 	// Axis limits.
 	p.X.Min = pattern.Azimuths[0]

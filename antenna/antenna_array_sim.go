@@ -126,7 +126,7 @@ func main() {
 
 	var azimuths []float64
 
-	for az := -10.0; az <= 10.0; az += 1.0 {
+	for az := -8.0; az <= 8.0; az += 1.0 {
 		azimuths = append(azimuths, az)
 	}
 

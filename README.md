@@ -41,11 +41,11 @@ This project assumes a 1-D uniform linear array (elements stacked along the y-ax
 
 The overall array gain is modeled as:
 
-$$G(\theta,\phi)=G_e(\theta,\phi)\,|AF(\theta,\phi)|^2$$
+$$G(\theta,\phi)=G_e(\theta,\phi)|AF(\theta,\phi)|^2$$
 
 The phase at element $n$ for a plane wave arriving from angle $\phi$ uses the steering term
 
-$$\exp\big(jk z_n\sin\phi\big)\quad\text{with }k=\dfrac{2\pi}{\lambda},\;z_n=\big(n-\tfrac{N-1}{2}\big)d$$
+$$\exp\big(jk z_n\sin\phi\big)\quad\text{with }k=\dfrac{2\pi}{\lambda} , z_n=\big(n-\tfrac{N-1}{2}\big)d$$
 
 To steer a beam to angle $\phi_0$ the array weights are
 

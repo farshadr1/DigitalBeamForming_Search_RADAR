@@ -53,11 +53,11 @@ $$w_n=\exp\big(-jk z_n\sin\phi_0\big)\qquad y=\sum_{n=0}^{N-1} w_n x_n$$
 
 An approximate half-power beamwidth (HPBW) for a uniform linear array is
 
-$$\mathrm{HPBW}\approx\dfrac{0.886\,\lambda}{N d \cos\phi_0}$$
+$$\mathrm{HPBW}\approx\dfrac{0.886\lambda}{N d \cos\phi_0}$$
 
 To form $M$ simultaneous beams a complex beamforming matrix $W_{N\times M}$ is used. The number of DBF beams required to cover an angular sector $S$ can be estimated as
 
-$$M\approx 1+\dfrac{S}{K\,\mathrm{HPBW}}$$
+$$M\approx 1+\dfrac{S}{K\mathrm{HPBW}}$$
 
 where $K$ is an overlap factor (e.g. $K=1$ no overlap, $K=0.5$ for 50% overlap).
 
